@@ -18,6 +18,7 @@ def getApp():
         Endpoint not found - 404
         """
         request.setResponseCode(404)
+        request.setHeader('Content-Type', 'application/json')
         invalid_path = request.path.decode('utf-8')
         return json.dumps({'error': 'Endpoint (%s) not found' % (invalid_path)})
 
@@ -27,6 +28,7 @@ def getApp():
         Invalid method - 405
         """
         request.setResponseCode(405)
+        request.setHeader('Content-Type', 'application/json')
         method = request.method.decode('utf-8')
         endpoint = request.path.decode('utf-8')
         return json.dumps({'error': 'Invalid method call (%s) at %s endpoint' % (method, endpoint)})
