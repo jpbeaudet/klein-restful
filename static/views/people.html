@@ -1,0 +1,77 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>People - Human Resources Application</title>
+<script src="/static/javascript/jquery-3.1.1.min.js"></script>
+<script>
+function loadJobTitles(){
+    // Populate the job title selector
+
+    var $jobtitles = $("#select-jobtitles");    // get the job title drop down
+    // make an request to get all the positions
+    var request = $.ajax({
+        url: "/v2/positions",
+        method: "GET",
+        dataType: "json",
+        headers: {
+            Authorization: "secret-v2"}
+    });
+    request.done(function(response){
+        // on successful request
+
+        response.forEach(function(item){
+            // iterate and populate the drop down
+
+            $jobtitles.append("<option>" + item.title + "</option>");
+        });
+    });
+};
+
+function loadPersonList(){
+    // Populate the person list
+
+    var $personlist = $("#list-persons");
+    var request = $.ajax({
+        url: "/v2/employees",
+        method: "GET",
+        dataType: "json",
+        headers: {Authorization: "secret-v2"}
+    });
+    request.done(function(response){
+        $personlist.empty();
+        response.forEach(function(item){
+            var list = [item.id, item.lastname, item.firstname, item.title].join(", ");
+            $personlist.append("<li>" + list + "</li>");
+        });
+    });
+}
+</script>
+</head>
+<body onload="loadJobTitles(); loadPersonList();">
+
+<h1>People - Human Resources</h1>
+
+<h3>Add a Person</h3>
+<div id="form-add">
+Job Title: <select id="select-jobtitles"></select><br>
+First Name: <input id="input-fname"><br>
+Last Name: <input id="input-lname"><br>
+Gender: <input id="input-gender"><br>
+DOB: <input id="input-dob"><br>
+Social Security Number: <input id="input-ssn"><br>
+Address: <input id="input-address"><br>
+<button>Add</button>
+</div>
+
+<h3>Fire a Person</h3>
+<div id="form-remove">
+ID: <input id="input-person-id"><br>
+<button>Fire</button>
+</div>
+
+<h3>People List</h3>
+<div>
+<ul id="list-persons"></ul>
+</div>
+</body>
+</html>

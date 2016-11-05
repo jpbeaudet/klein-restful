@@ -1,19 +1,29 @@
-from base_app import getApp
+from twisted.web.static import File
+
+from reusable import baseApp
 from v1 import app as v1_app
 from v2 import app as v2_app
 
 
-mainApp = getApp()
+main_app = baseApp()
 
-@mainApp.route('/v1', branch=True)
+@main_app.route('/static/', branch=True)
+def static(request):
+    return File('static')
+
+@main_app.route('/')
+def home(request):
+    request.redirect('/static/views/home.html')
+
+@main_app.route('/v1', branch=True)
 def version_1(request):
     return v1_app.getResource()
 
-@mainApp.route('/v2', branch=True)
+@main_app.route('/v2', branch=True)
 def version_2(request):
     return v2_app.getResource()
 
-@mainApp.route('/hr', branch=True)
+@main_app.route('/hr', branch=True)
 def humanResources(request):
     header = request.getHeader('Content-Type')
     if header == 'application/json/2.1':
@@ -40,4 +50,4 @@ if __name__ == '__main__':
     if logFile:
         logFile = open(logFile, 'a')
 
-    mainApp.run(host=host, port=port, logFile=logFile)
+    main_app.run(host=host, port=port, logFile=logFile)

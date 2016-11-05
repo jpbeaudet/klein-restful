@@ -37,7 +37,7 @@ def genPeople(faker, gender, n=50):
         person = {}
         person['_id_'] = genID(faker)
         person['email'] = faker.email()
-        person['firstname'], person['surname'] = genName(faker, gender).split(' ')
+        person['firstname'], person['lastname'] = genName(faker, gender).split(' ')
         person['gender'] = gender
         person['dob'] = genBirthday(faker)
         person['address'] = genAddress(faker)
@@ -97,7 +97,7 @@ def main(reactor):
             person_ids.append(person['_id_'])
 
             yield hr_db.insert(
-                table='person',
+                table='people',
                 fields=fields,
                 values=values)
 

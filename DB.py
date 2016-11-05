@@ -23,17 +23,17 @@ class HumanResourcesDatabase(object):
         return self._connection
 
     def _createPerson(self, cursor):
-        create_person = 'CREATE TABLE person ('\
+        create_people = 'CREATE TABLE people ('\
             '_id_ TEXT PRIMARY KEY,'\
             'email TEXT,'\
             'firstname TEXT,'\
-            'surname TEXT,'\
+            'lastname TEXT,'\
             'gender TEXT,'\
             'dob DATE,'\
             'address TEXT,'\
             'ssn TEXT UNIQUE'\
             ')'
-        cursor.execute(create_person)
+        cursor.execute(create_people)
 
     def _createPositions(self, cursor):
         create_positions = 'CREATE TABLE positions ('\
@@ -46,7 +46,7 @@ class HumanResourcesDatabase(object):
         create_job = 'CREATE TABLE jobs ('\
             'person_id TEXT PRIMARY KEY,'\
             'title_id TEXT,'\
-            'FOREIGN KEY (person_id) REFERENCES person (_id_),'\
+            'FOREIGN KEY (person_id) REFERENCES people (_id_),'\
             'FOREIGN KEY (title_id) REFERENCES positions (_id_)'\
             ')'
         cursor.execute(create_job)
@@ -69,3 +69,13 @@ class HumanResourcesDatabase(object):
         """
         """
         return self.connection_pool.runInteraction(self._insert, table, fields, values)
+
+    @defer.inlineCallbacks
+    def getPeopleRecords(self):
+        stmt = "SELECT jobs.person_id, people.lastname, people.firstname, positions.title"\
+            " FROM people"\
+            " JOIN jobs ON jobs.person_id=people._id_"\
+            " JOIN positions ON positions._id_=jobs.title_id"\
+            " ORDER BY people.lastname ASC"
+        result = yield self.connection_pool.runQuery(stmt)
+        defer.returnValue(result)

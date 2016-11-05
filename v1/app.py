@@ -1,7 +1,7 @@
-from base_app import getApp
+from reusable import baseApp
 
 
-app = getApp()
+app = baseApp()
 
 def getResource():
     return app.resource()
