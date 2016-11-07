@@ -19,29 +19,42 @@ def getResource():
 @json_api.route('/employees', methods=['GET'], restricted=True)
 @defer.inlineCallbacks
 def listEmployees(reqest):
-    query = yield hr_db.getPeopleRecords()
-    result = []
+    """
+    Produce a set of all currently employed individuals in the company.
+    """
+    query = yield hr_db.getEmployees()
+    records = []
     for index, record in enumerate(query):
         person = {}
         person['id'], person['lastname'], person['firstname'], person['title'] = record
-        result.append(person)
+        records.append(person)
 
         if index % 100 == 0:
             yield
 
-    return result
+    return records
 
 @json_api.route('/employee', methods=['GET'], restricted=True)
 def getEmployeeInfo(request):
     return '(v2) Get specific employee information'
 
 @json_api.route('/positions', methods=['GET'], restricted=True)
+@defer.inlineCallbacks
 def listAllPositions(request):
-    result = [
-        {'id': 'abc123', 'title': 'Job #1'},
-        {'id': 'abc456', 'title': 'Job #2'},
-        {'id': 'xyz123', 'title': 'Job #3'}]
-    return result
+    """
+    Get the active positions in the company.
+    """
+    query = yield hr_db.getPositions()
+    records = []
+    for index, record in enumerate(query):
+        position = {}
+        position['id'], position['title'] = record
+        records.append(position)
+
+        if index % 100 == 0:
+            yield
+
+    return records
 
 @json_api.route('/position', methods=['GET'], restricted=True)
 def getPositionInfo(request):

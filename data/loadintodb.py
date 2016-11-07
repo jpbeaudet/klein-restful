@@ -69,7 +69,6 @@ def main(reactor):
     title_ids = []
     person_ids = []
 
-    #positions = [p for p in genPositions(faker, n=30)]
     for position in genPositions(faker, n=30):
         fields = []     # store fields
         values = []     # store values
@@ -84,8 +83,6 @@ def main(reactor):
             fields=fields,
             values=values)
 
-    #people = [p for p in genPeople(faker, 'male', 100)]
-    #people.extend([p for p in genPeople(faker, 'female', 100)])
     for gender in ['male', 'female']:
         num_of_ppl = 100
         for person in genPeople(faker, gender, num_of_ppl):
@@ -101,11 +98,12 @@ def main(reactor):
                 fields=fields,
                 values=values)
 
-    #job_titles = [t['title'] for t in positions]
-    #jobs = [j for j in genJobTitles(people, job_titles)]
     for person_id in person_ids:
-        fields = ['title_id', 'person_id']
-        values = [choice(title_ids), person_id]
+        fields = ['title_id', 'person_id', 'status']
+        values = [
+            choice(title_ids),
+            person_id,
+            choice([0, 1, 1, 1, 1])]    # decrease chances of setting 0
         yield hr_db.insert(
             table='jobs',
             fields=fields,
@@ -113,3 +111,4 @@ def main(reactor):
 
 if __name__ == '__main__':
     task.react(main)
+

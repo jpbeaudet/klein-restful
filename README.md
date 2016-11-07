@@ -34,6 +34,7 @@ positions
 | --- | --- |
 | \_id_ (PRIMARY KEY) | TEXT |
 | title | TEXT |
+| status | INT |
 
 
 jobs
